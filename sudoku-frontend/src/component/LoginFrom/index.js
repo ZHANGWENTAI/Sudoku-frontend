@@ -11,19 +11,57 @@ class LoginFrom extends Component {
         super(props);
 
         this.state = {
-            error: ""
+            error: "",
+            showRegisterPage: false
         }
 
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.changePage = this.changePage.bind(this)
+        this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
+        this.handleSignupSubmit = this.handleSignupSubmit.bind(this);
     }
 
-    handleSubmit(e) {
-        e.preventDefault();
-        const authentication = md5(this.username + this.password)
+    changePage() {
+        if (this.state.showRegisterPage) {
+            this.setState({ showRegisterPage: false })
+        } else {
+            this.setState({ showRegisterPage: true })
+        }
+    }
 
+    handleLoginSubmit(e) {
+        e.preventDefault();
+        if (this.username === undefined || this.password === undefined) {
+            this.setState({ error: "Please fill the form correctly"});
+            return;
+        }
+
+        const authentication = md5(this.username + this.password)
         UserAPI.login(this.username, authentication).then(response => {
             response.json().then(data => {
-                if (data.message != "Success") {
+                if (data.message !== "Success") {
+                    this.setState({ error: data.message });
+                    return;
+                }
+                this.props.onLogin(authentication);
+            });
+        });
+    }
+
+    handleSignupSubmit(e) {
+        e.preventDefault();
+        if (this.username === undefined || this.password === undefined || this.repassword === undefined) {
+            this.setState({ error: "Please fill the form correctly"});
+            return;
+        }
+        if (this.password !== this.repassword) {
+            this.setState({ error: "Please enter the passowrd correctly"});
+            return;
+        }
+
+        const authentication = md5(this.username + this.password)
+        UserAPI.signup(this.username, authentication).then(response => {
+            response.json().then(data => {
+                if (data.message !== "Success") {
                     this.setState({ error: data.message });
                     return;
                 }
@@ -42,24 +80,44 @@ class LoginFrom extends Component {
                 </Message>
             )
         }
-        return (
-            <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
-                <Grid.Column style={{ maxWidth: 450 }}>
-                    <Header as='h2' color='teal' textAlign='center'>Log-in to your account</Header>
-                    {message}
-                    <Form size='large' onSubmit={this.handleSubmit}>
-                        <Segment stacked>
-                            <Form.Input fluid icon='user' iconPosition='left' placeholder='Username' type='text' onChange={evt => this.username = evt.target.value} />
-                            <Form.Input fluid icon='lock' iconPosition='left' placeholder='Password' type='password' onChange={evt => this.password = evt.target.value} />
-                            <Button color='teal' fluid size='large'>Login</Button>
-                        </Segment>
-                    </Form>
-                    <Message>
-                        New to us? <a href='#'>Sign Up</a>
-                    </Message>
-                </Grid.Column>
-            </Grid>
-        );
+        if (!this.state.showRegisterPage) {
+            return (
+                <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+                    <Grid.Column style={{ maxWidth: 450 }}>
+                        <Header as='h2' color='teal' textAlign='center'>Sudoku Account</Header>
+                        {message}
+                        <Form size='large' onSubmit={this.handleLoginSubmit}>
+                            <Segment stacked>
+                                <Form.Input fluid icon='user' iconPosition='left' placeholder='Username' type='text' onChange={evt => this.username = evt.target.value} />
+                                <Form.Input fluid icon='lock' iconPosition='left' placeholder='Password' type='password' onChange={evt => this.password = evt.target.value} />
+                                <Button color='teal' fluid size='large' type='submit'>Log in</Button>
+                                Or
+                                <Button color='teal' fluid size='large' type='button' onClick={this.changePage}>To Sign Up</Button>
+                            </Segment>
+                        </Form>
+                    </Grid.Column>
+                </Grid>
+            );
+        } else {
+            return (
+                <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+                    <Grid.Column style={{ maxWidth: 450 }}>
+                        <Header as='h2' color='teal' textAlign='center'>Sudoku Account</Header>
+                        {message}
+                        <Form size='large' onSubmit={this.handleSignupSubmit}>
+                            <Segment stacked>
+                                <Form.Input fluid icon='user' iconPosition='left' placeholder='Username' type='text' onChange={evt => this.username = evt.target.value} />
+                                <Form.Input fluid icon='lock' iconPosition='left' placeholder='Password' type='password' onChange={evt => this.password = evt.target.value} />
+                                <Form.Input fluid icon='lock' iconPosition='left' placeholder='Repassword' type='password' onChange={evt => this.repassword = evt.target.value} />
+                                <Button color='teal' fluid size='large' type='submit'>Sign up</Button>
+                                Or
+                                <Button color='teal' fluid size='large' type='button' onClick={this.changePage}>To Log in</Button>
+                            </Segment>
+                        </Form>
+                    </Grid.Column>
+                </Grid>
+            );
+        }
     }
 }
 
