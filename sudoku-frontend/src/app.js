@@ -26,9 +26,7 @@ class HomePage extends Component {
         }
     }
 
-    onLogin(authentication, data) {
-        Cookies.set("authentication", authentication, {expires: 7});
-        Cookies.set("userinfo", data, {expires: 7});
+    onLogin(){
         this.setState({
             login: true,
         });

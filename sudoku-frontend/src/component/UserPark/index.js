@@ -1,24 +1,18 @@
 import React, {Component} from 'react';
-import {Grid, Message, Container, Divider, Button} from 'semantic-ui-react';
+import {Grid, Message, Container, Button} from 'semantic-ui-react';
 import SudokuBoard from './SudokuBoard'
+import SudokuGrid from './SudokuBoard/sudokugrid';
 import KeyBoard from './KeyBoard'
 import UserCard from './UserCard'
-import Cookies from 'js-cookie'
-import PuzzleAPI from '../../logic/PuzzleAPI'
+import PuzzleAPI from "../../logic/PuzzleAPI"
 
 class UserPark extends Component {
   constructor(props) {
     super(props);
     this.state = {
         error: '',
-        user: {
-          name: '',
-          score: 0,
-          submited: 0,
-          passed: 0,
-          createdtime: '',
-        },
         puzzleContent: '',
+        puzzleAnswer: '',
         activeRow: 0,
         activeColumn: 0,
     };
@@ -31,12 +25,6 @@ class UserPark extends Component {
   //   new Solver(grid).solve();
   //   this.setState({ puzzlecontent: grid.toFlatString() });
   // }
-  componentDidMount() {
-    var user = Cookies.get("user");
-    this.setState({
-      user: user,
-    });
-  }
 
   //generate pid and level according difficulty then send request to backend
   handleNewProblem(difficulty) {
@@ -59,14 +47,28 @@ class UserPark extends Component {
 
   //check whether the board is fullfiled and whether the answer is right, finally submit
   handleSubmit() {
-
+    for(let i = 0; i < this.state.puzzleContent.length; i++) {
+      if(this.state.puzzleContent.split("")[i] === '0') {
+        this.setState({
+          error: "Please complete the table before submit"
+        })
+      }
+      else if(this.state.puzzleAnswer !== this.state.puzzleContent) {
+        this.setState({
+          error: "The answer is wrong"
+        })
+      }
+    }
   }
 
   // update the state with the new puzzle string
   handleKeyClick(value) {
-    var pc = this.state.puzzleContent.split("")
-    pc[9 * this.state.activeRow + this.state.activeColumn] = value;
-    this.setState({ puzzleContent: pc.toString() });
+    var grid = new SudokuGrid(this.state.puzzleContent)
+    grid.rows[this.state.activeRow][this.state.activeColumn] = value;
+    this.setState({ 
+      puzzleContent: grid.toFlatString(),
+      error: ''
+    });
   }
 
   // locate the input square
@@ -81,48 +83,55 @@ class UserPark extends Component {
     var message;
     if (this.state.error !== "") {
         message = (
-            <Message negative>
-                <Message.Header>Oops!</Message.Header>
+            <Message size="big" negative>
+                <Message.Header centered >Oops!</Message.Header>
                 <p>{ this.state.error }</p>
             </Message>
         )
     }
     return (
-      <Container style={{ marginTop: '2em' }}>
+      <Container style={{ marginTop: '3em' }}>
+        {message}
         <Grid>
-          {message}
-          <Grid.Column width={4}>
-            <UserCard
-              userInfo={this.state.user}
-            />
-            {/* <GridRow>
-              <TodoList/>
-            </GridRow> */}
-          </Grid.Column>
-          <Grid.Column width={9}>
-            <Grid.Row>
-              <SudokuBoard
-                puzzleContent={this.state.puzzleContent}
-                onCellChosen={this.onCellChosen.bind(this)}
+          <Grid.Row >
+            <Grid.Column width={3}>
+              <UserCard
+                username={this.state.username}
+                score={this.state.score}
+                submited={this.state.submited}
+                passed={this.state.passed}
+                createdtime={this.state.createdtime}
               />
-            </Grid.Row>
-            <Grid.row>
-              <Button color='teal' size='large' type='button' onClick={() => this.handleSubmit()}>Submit </Button>
-              <Divider vertical/>
+              {/* <GridRow>
+                <TodoList/>
+              </GridRow> */}
+            </Grid.Column>
+            <Grid.Column width={8}>
+                <SudokuBoard
+                  puzzleContent={this.state.puzzleContent}
+                  onCellChosen={this.onCellChosen.bind(this)}
+                />
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <KeyBoard
+                handleKeyClick={this.handleKeyClick.bind(this)}
+              />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row centered>
+            <Grid.Column>
+              <Button color='teal'  size='large' onClick={() => this.handleSubmit()}> Submit </Button>
+            </Grid.Column>
+            <Grid.Column>
               <Button.Group>
-                <Button color='green' size='large' type='button' onClick={() => this.handleNewProblem(8)}>Easy</Button>
+                <Button color='green' size='large' onClick={() => this.handleNewProblem(8)}> Easy </Button>
                 <Button.Or />
-                <Button color='yellow' size='large' type='button' onClick={() => this.handleNewProblem(4)}>Medium</Button>
+                <Button color='yellow' size='large'  onClick={() => this.handleNewProblem(4)}> Medium </Button>
                 <Button.Or />
-                <Button color='red' size='large' type='button' onClick={() => this.handleNewProblem(0)}>Hard</Button>
+                <Button color='red' size='large' onClick={() => this.handleNewProblem(0)}> Hard </Button>
               </Button.Group>
-            </Grid.row>
-          </Grid.Column>
-          <Grid.Column width={3}>
-            <KeyBoard
-              handleKeyClick={this.handleKeyClick.bind(this)}
-            />
-          </Grid.Column>
+            </Grid.Column>
+          </Grid.Row>
         </Grid>
       </Container> 
     );

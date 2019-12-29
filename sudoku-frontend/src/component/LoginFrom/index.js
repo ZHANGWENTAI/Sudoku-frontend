@@ -3,7 +3,7 @@ import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 import md5 from "md5";
-
+import Cookies from 'js-cookie'
 import UserAPI from "../../logic/UserAPI";
 
 class LoginFrom extends Component {
@@ -40,9 +40,16 @@ class LoginFrom extends Component {
             response.json().then(data => {
                 if (data.message !== "Success") {
                     this.setState({ error: data.message });
-                    return;
                 }
-                this.props.onLogin(authentication, data.data);
+                else{
+                    Cookies.set("authentication", authentication, {expires: 7});
+                    Cookies.set("username", data.data.Username, {expires: 7});
+                    Cookies.set("submited", data.data.submited, {expires: 7});
+                    Cookies.set("passed", data.data.Passed, {expires: 7});
+                    Cookies.set("score", data.data.Score, {expires: 7});
+                    Cookies.set("createdtime", data.data.CreatedTime, {expires: 7});
+                    this.props.onLogin()
+                }
             });
         });
     }
@@ -63,9 +70,16 @@ class LoginFrom extends Component {
             response.json().then(data => {
                 if (data.message !== "Success") {
                     this.setState({ error: data.message });
-                    return;
                 }
-                this.props.onLogin(authentication, data.data);
+                else{
+                    Cookies.set("authentication", authentication, {expires: 7});
+                    Cookies.set("username", data.data.Username, {expires: 7});
+                    Cookies.set("submited", data.data.submited, {expires: 7});
+                    Cookies.set("passed", data.data.Passed, {expires: 7});
+                    Cookies.set("score", data.data.Score, {expires: 7});
+                    Cookies.set("createdtime", data.data.CreatedTime, {expires: 7});
+                    this.props.onLogin()
+                }
             });
         });
     }

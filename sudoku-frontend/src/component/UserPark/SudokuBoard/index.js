@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import SudokuGrid from "./sudokugrid"
-import "./index.css";
+import './index.css';
 import 'semantic-ui-css/semantic.min.css';
 
 
