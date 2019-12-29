@@ -4,6 +4,7 @@ import Cell from "./cell";
     [[1, 2, 3], [4, 5, 6]].flatten()
     [1, 2, 3, 4, 5, 6]
 */
+//eslint-disable-next-line
 Array.prototype.flatten = function() {
     return [].concat.apply([], this);
 };
@@ -16,7 +17,7 @@ const EMPTY = (() => {
     return temp.join("");
 })();
 
-export default class Grid {
+class SudokuGrid {
     constructor(input = EMPTY) {
         let currentRow;
         this.rows = [];
@@ -191,3 +192,5 @@ export default class Grid {
             .join("");
     }
 }
+
+export default SudokuGrid

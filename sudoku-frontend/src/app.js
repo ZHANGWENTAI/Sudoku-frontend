@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Cookies from "js-cookie"
+import Cookies from 'js-cookie'
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import LoginForm from './component/LoginFrom/index'
-import SudokuGame from './component/SudukoGame/index'
+import UserPark from "./component/UserPark";
 
 
 class HomePage extends Component {
@@ -26,8 +26,9 @@ class HomePage extends Component {
         }
     }
 
-    onLogin(data) {
-        Cookies.set("authentication", data, {expires: 7});
+    onLogin(authentication, data) {
+        Cookies.set("authentication", authentication, {expires: 7});
+        Cookies.set("userinfo", data, {expires: 7});
         this.setState({
             login: true,
         });
@@ -35,7 +36,7 @@ class HomePage extends Component {
 
     render() {
         if (this.state.login) {
-            return (<SudokuGame />);
+            return (<UserPark/>);
         } else {
             return (<LoginForm onLogin={this.onLogin} />);
         }

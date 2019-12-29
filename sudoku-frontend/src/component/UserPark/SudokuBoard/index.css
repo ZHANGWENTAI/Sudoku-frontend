@@ -10,7 +10,7 @@ h1 {
 h1, p { text-align: center; }
 
 table.sudoku {
-  border: 3px solid #008A73;
+  border: 3px solid #2dcfb4;
   border-collapse: collapse;
   margin: 20px auto;
 }
@@ -25,6 +25,7 @@ td {
 
 td input {
   font-size: 1em;
+  cursor: pointer;
   width: 1em;
   border: none;
   text-align: center;
@@ -32,11 +33,11 @@ td input {
 }
 
 td:nth-child(3n) {
-  border-right: 3px solid #008A73;
+  border-right: 3px solid #2dcfb4;
 }
 
 tr:nth-child(3n) {
-  border-bottom: 3px solid #008A73;
+  border-bottom: 3px solid #2dcfb4;
 }
 
 .buttons {

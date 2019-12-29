@@ -15,7 +15,7 @@ class LoginFrom extends Component {
             showRegisterPage: false
         }
 
-        this.changePage = this.changePage.bind(this)
+        this.changePage = this.changePage.bind(this);
         this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
         this.handleSignupSubmit = this.handleSignupSubmit.bind(this);
     }
@@ -42,7 +42,7 @@ class LoginFrom extends Component {
                     this.setState({ error: data.message });
                     return;
                 }
-                this.props.onLogin(authentication);
+                this.props.onLogin(authentication, data.data);
             });
         });
     }
@@ -65,7 +65,7 @@ class LoginFrom extends Component {
                     this.setState({ error: data.message });
                     return;
                 }
-                this.props.onLogin(authentication);
+                this.props.onLogin(authentication, data.data);
             });
         });
     }
