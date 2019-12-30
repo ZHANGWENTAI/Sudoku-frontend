@@ -21,7 +21,7 @@ class UserCard extends Component {
         var submited = Cookies.get("submited");
         var passed = Cookies.get("passed");
         var createdtime = Cookies.get("createdtime");
-        console.log(name)
+        // console.log(name)
         this.setState({
           username: name,
           score: score,
@@ -34,18 +34,16 @@ class UserCard extends Component {
     render() {    
         return (
             <Card>
-                <Image src='C:\Users\20929\go\src\github.com\JmPotato\Sudoku-frontend\sudoku-frontend\src\component\UserPark\photo.jpg' wrapped ui={true} />
+                <Image src='https://react.semantic-ui.com/images/avatar/large/matthew.png' wrapped ui={true} />
                 <Card.Content>
-                    <Card.Header Content = {this.props.username} />
+                    <Card.Header>{this.state.username}</Card.Header>
                     <Card.Meta>
-                        <span className='date' Content={this.props.createdtime}/>
+                        <span className='date'>Joined in {this.state.createdtime}</span>
                     </Card.Meta>
-                </Card.Content>
-                <Card.Content extra>
-                    <Card.Description Content={"Username:\t"+this.props.username}/>
-                    <Card.Description Content={"Score:\t"+this.props.score}/>
-                    <Card.Description Content={"Submit:\t"+this.props.submited}/>
-                    <Card.Description Content={"Pass:\t"+this.props.passed}/>
+                    <Card.Description>{"Username: "+this.state.username}</Card.Description>
+                    <Card.Description content={"Score: "+this.state.score}/>
+                    <Card.Description content={"Submit: "+this.state.submited}/>
+                    <Card.Description content={"Pass: "+this.state.passed}/>
                 </Card.Content>
             </Card>
         );

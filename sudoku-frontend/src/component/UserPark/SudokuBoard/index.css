@@ -45,7 +45,7 @@ tr:nth-child(3n) {
 }
 
 
-button {
+.KeyBoard {
   color:  black;
   width: 2em;
   font-size: 1.5em;
@@ -58,7 +58,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.KeyBoard button:hover {
   color: white;
   background-color: #2dcfb4;
 }

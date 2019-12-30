@@ -94,7 +94,7 @@ class UserPark extends Component {
         {message}
         <Grid>
           <Grid.Row >
-            <Grid.Column width={3}>
+            <Grid.Column width={4}>
               <UserCard
                 username={this.state.username}
                 score={this.state.score}
@@ -119,18 +119,14 @@ class UserPark extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>
-            <Grid.Column>
-              <Button color='teal'  size='large' onClick={() => this.handleSubmit()}> Submit </Button>
-            </Grid.Column>
-            <Grid.Column>
               <Button.Group>
+                <Button color='teal'  size='large' style={{marginRight: '10px'}} onClick={() => this.handleSubmit()}> Submit </Button>
                 <Button color='green' size='large' onClick={() => this.handleNewProblem(8)}> Easy </Button>
                 <Button.Or />
                 <Button color='yellow' size='large'  onClick={() => this.handleNewProblem(4)}> Medium </Button>
                 <Button.Or />
                 <Button color='red' size='large' onClick={() => this.handleNewProblem(0)}> Hard </Button>
               </Button.Group>
-            </Grid.Column>
           </Grid.Row>
         </Grid>
       </Container> 
