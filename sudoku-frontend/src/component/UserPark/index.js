@@ -11,6 +11,11 @@ class UserPark extends Component {
   constructor(props) {
     //initial 81 Zeros
     const initPuzzleContent = '000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+    var name = Cookies.get("username");
+    var score = Cookies.get("score");
+    var submited = Cookies.get("submited");
+    var passed = Cookies.get("passed");
+    var createdtime = Cookies.get("createdtime");
     super(props);
     this.state = {
         error: '',
@@ -18,6 +23,13 @@ class UserPark extends Component {
         pid: 0,
         activeRow: 0,
         activeColumn: 0,
+        username: name,
+        uid: 0,
+        score: score,
+        submited: submited,
+        passed: passed,
+        createdtime: createdtime.substr(0, 10),
+        message: ''
     };
   }
 
@@ -83,14 +95,28 @@ class UserPark extends Component {
       let authentication = Cookies.get('authentication')
       let pid = this.state.pid
       let passed = this.checkAnswer() ? 1 : 0
-      console.log("passed: ", passed)
       PuzzleAPI.postsubmit(uid, authentication, pid, passed).then(response => {
         response.json().then(data => {
           if (data.message === "Success") {
-            console.log(data.data)
+            if (passed === 1) {
+              this.setState({
+                message: 'Bingo!'
+              })
+            } else {
+              this.setState({
+                message: 'Oops! Your answer is wrong!'
+              })
+            }
             Cookies.set("submited", data.data.submited)
             Cookies.set("passed", data.data.passed)
             Cookies.set("score", data.data.score)
+            this.setState({
+              username: data.data.username,
+              uid: data.data.uid,
+              score: data.data.score,
+              submited: data.data.submited,
+              passed: data.data.passed
+            })
           } else {
             that.setState({
               error: data.message
@@ -116,7 +142,8 @@ class UserPark extends Component {
     this.setState({
       activeRow: row,
       activeColumn: col,
-      error: ''
+      error: '',
+      message: ''
     });
   }
 
@@ -125,15 +152,25 @@ class UserPark extends Component {
     if (this.state.error !== "") {
         message = (
             <Message size="big" negative>
-                <Message.Header centered >Oops!</Message.Header>
                 <p>{ this.state.error }</p>
             </Message>
         )
     }
+    if (this.state.error === "" && this.state.message !== "") {
+      message = (
+          <Message size="big">
+              <p>{ this.state.message }</p>
+          </Message>
+      )
+    }
     return (
       <Container style={{ marginTop: '3em' }}>
-        {message}
         <Grid>
+          <Grid.Row centered>
+            <Grid.Column width={16}>
+              {message}
+            </Grid.Column>
+          </Grid.Row>
           <Grid.Row >
             <Grid.Column width={4}>
               <UserCard
@@ -143,9 +180,6 @@ class UserPark extends Component {
                 passed={this.state.passed}
                 createdtime={this.state.createdtime}
               />
-              {/* <GridRow>
-                <TodoList/>
-              </GridRow> */}
             </Grid.Column>
             <Grid.Column width={8}>
                 <SudokuBoard
@@ -160,7 +194,7 @@ class UserPark extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>
-            <Button color='teal'  size='large' style={{marginRight: '15px'}} onClick={() => this.handleSubmit()}> Submit </Button>
+            <Button color='teal'  size='large' style={{marginRight: '15px'}} onClick={() => {this.setState({message: 'Checking and submitting...'});this.handleSubmit();}}> Submit </Button>
             <Button.Group>
               <Button color='green' size='large' onClick={() => this.handleNewProblem(8)}> Easy </Button>
               <Button.Or />

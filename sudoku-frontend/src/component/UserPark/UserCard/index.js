@@ -7,11 +7,11 @@ class UserCard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            username: '',
-            score: 0,
-            submited: 0,
-            passed: 0,
-            createdtime: '',
+            username: this.props.username,
+            score: this.props.score,
+            submited: this.props.submited,
+            passed: this.props.passed,
+            createdtime: this.props.createdtime,
         }
     }
 
@@ -27,9 +27,19 @@ class UserCard extends Component {
           score: score,
           submited: submited,
           passed: passed,
-          createdtime: createdtime,
+          createdtime: createdtime.substr(0, 10),
         });
     }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+          username: nextProps.username,
+          score: nextProps.score,
+          submited: nextProps.submited,
+          passed: nextProps.passed,
+          createdtime: nextProps.createdtime
+        });
+      }
 
     render() {    
         return (
@@ -40,7 +50,6 @@ class UserCard extends Component {
                     <Card.Meta>
                         <span className='date'>Joined in {this.state.createdtime}</span>
                     </Card.Meta>
-                    <Card.Description>{"Username: "+this.state.username}</Card.Description>
                     <Card.Description content={"Score: "+this.state.score}/>
                     <Card.Description content={"Submit: "+this.state.submited}/>
                     <Card.Description content={"Pass: "+this.state.passed}/>
