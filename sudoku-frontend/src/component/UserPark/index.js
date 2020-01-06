@@ -52,16 +52,21 @@ class UserPark extends Component {
       let checkSub = {}
       for(let j = 0; j < 9; j++) {
         let num = answer[i*9 + j]
-        if(checkRow) return false
-        num = answer[i + 9*j]
-        if(checkCol[num]) return false
-        num = answer[Math.floor(i/3)*27 + (i%3)*3 + Math.floor(j/3)*9 + (j%3)]
-        if(checkSub[num]) return false
+        if(checkRow[num] === true) return false
         checkRow[num] = true
+
+        num = answer[i + 9*j]
+        if(checkCol[num] === true) return false
         checkCol[num] = true
+
+        num = answer[Math.floor(i/3)*27 + (i%3)*3 + Math.floor(j/3)*9 + (j%3)]
+        if(checkSub[num] === true) return false
         checkSub[num] = true
+
+        console.log(i, j, checkRow, checkCol, checkSub)
       }
     }
+    console.log("bingo")
     return true
   }
 
@@ -78,9 +83,11 @@ class UserPark extends Component {
       let authentication = Cookies.get('authentication')
       let pid = this.state.pid
       let passed = this.checkAnswer() ? 1 : 0
+      console.log("passed: ", passed)
       PuzzleAPI.postsubmit(uid, authentication, pid, passed).then(response => {
         response.json().then(data => {
           if (data.message === "Success") {
+            console.log(data.data)
             Cookies.set("submited", data.data.submited)
             Cookies.set("passed", data.data.passed)
             Cookies.set("score", data.data.score)

@@ -44,6 +44,7 @@ class LoginFrom extends Component {
                 else{
                     console.log(data)
                     Cookies.set("authentication", authentication, {expires: 7});
+                    Cookies.set("uid", data.data.uid, {expires: 7})
                     Cookies.set("username", data.data.username, {expires: 7});
                     Cookies.set("submited", data.data.submited, {expires: 7});
                     Cookies.set("passed", data.data.passed, {expires: 7});
