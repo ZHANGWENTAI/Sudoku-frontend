@@ -74,11 +74,12 @@ class LoginFrom extends Component {
                 }
                 else{
                     Cookies.set("authentication", authentication, {expires: 7});
-                    Cookies.set("username", data.data.Username, {expires: 7});
+                    Cookies.set("uid", data.data.uid, {expires: 7});
+                    Cookies.set("username", data.data.username, {expires: 7});
                     Cookies.set("submited", data.data.submited, {expires: 7});
-                    Cookies.set("passed", data.data.Passed, {expires: 7});
-                    Cookies.set("score", data.data.Score, {expires: 7});
-                    Cookies.set("createdtime", data.data.CreatedTime, {expires: 7});
+                    Cookies.set("passed", data.data.passed, {expires: 7});
+                    Cookies.set("score", data.data.score, {expires: 7});
+                    Cookies.set("createdtime", data.data.createdTime, {expires: 7});
                     this.props.onLogin()
                 }
             });

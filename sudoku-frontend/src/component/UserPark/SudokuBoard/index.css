@@ -13,6 +13,7 @@ table.sudoku {
   border: 3px solid #2dcfb4;
   border-collapse: collapse;
   margin: 12px auto;
+
 }
 
 td {
@@ -33,7 +34,9 @@ td input {
 }
 
 td input:focus {
-  box-shadow: inset 0 0 3px #2dcfb4, 0 0 3px #2dcfb4
+  height: 1.5em;
+  width: 1.5em;
+  box-shadow: inset 0 0 5px #2dcfb4, 0 0 3px #2dcfb4
 }
 
 td:nth-child(3n) {

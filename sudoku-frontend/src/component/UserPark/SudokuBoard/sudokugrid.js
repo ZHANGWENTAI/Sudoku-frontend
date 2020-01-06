@@ -1,5 +1,16 @@
-import Cell from "./cell";
+class Cell {
+    constructor(row, col, value) {
+        this.value = value || 0;
+        this.row = row;
+        this.col = col;
 
+        this.possibleValues = [];
+    }
+
+    toString() {
+        return this.value || "0"
+    }
+}
 /*
     [[1, 2, 3], [4, 5, 6]].flatten()
     [1, 2, 3, 4, 5, 6]
@@ -12,7 +23,7 @@ Array.prototype.flatten = function() {
 const EMPTY = (() => {
     let temp = [];
     for (let i = 0; i < 81; i++) {
-        temp.push(".");
+        temp.push("0");
     }
     return temp.join("");
 })();
@@ -29,32 +40,32 @@ class SudokuGrid {
             }
 
             currentRow.push(
-                new Cell(this.rows.length - 1, currentRow.length, input[idx])
+                new Cell(this.rows.length - 1, currentRow.length, parseInt(input[idx],10))
             );
         }
     }
 
-    toString() {
-        let output = "";
-        for (let i = 0; i < this.rows.length; i++) {
-            if (i !== 0 && i % 3 === 0) {
-                output += "---------+---------+---------\n";
-            }
+    // toString() {
+    //     let output = "";
+    //     for (let i = 0; i < this.rows.length; i++) {
+    //         if (i !== 0 && i % 3 === 0) {
+    //             output += "---------+---------+---------\n";
+    //         }
 
-            let currentRow = this.rows[i];
-            for (let j = 0; j < currentRow.length; j++) {
-                if (j !== 0 && j % 3 === 0) {
-                    output += "|";
-                }
+    //         let currentRow = this.rows[i];
+    //         for (let j = 0; j < currentRow.length; j++) {
+    //             if (j !== 0 && j % 3 === 0) {
+    //                 output += "|";
+    //             }
 
-                output += " " + currentRow[j].toString() + " ";
-            }
+    //             output += " " + currentRow[j].toString() + " ";
+    //         }
 
-            output += "\n";
-        }
+    //         output += "\n";
+    //     }
 
-        return output;
-    }
+    //     return output;
+    // }
 
     subgrids() {
         if (!this.grids) {
@@ -186,10 +197,9 @@ class SudokuGrid {
     }
 
     toFlatString() {
-        return this.rows
-            .flatten()
-            .map(x => x.toString())
-            .join("");
+        return this.rows.flatten()
+                        .map(x => x.toString())
+                        .join("");
     }
 }
 

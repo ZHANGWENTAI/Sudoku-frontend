@@ -11,14 +11,13 @@ const PuzzleAPI = {
         });
     },
     
-    postanswer(uid, authentication, pid, ifpass) {
-        const data = new URLSearchParams();
-        data.append("uid", uid);
-        data.append("authentication", authentication);
-        data.append("pid", pid);
-        data.append("ifpass", ifpass);
-
-        return fetch(this.BASE_URL + "/pass", {
+    postsubmit(uid, authentication, pid, passed) {
+        const data= new URLSearchParams()
+        data.append("uid", uid)
+        data.append("authentication", authentication)
+        data.append("pid", pid)
+        data.append("passed", passed)
+        return fetch(this.BASE_URL + "/submit", {
             method: "POST",
             body: data,
             headers: {

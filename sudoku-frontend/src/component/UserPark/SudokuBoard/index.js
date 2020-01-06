@@ -27,11 +27,11 @@ class SudokuBoard extends Component {
     return (
       <table className="sudoku">
         <tbody>
-          {grid.rows.map((row, idx) => {
+          {grid.rows.map(row => {
             return (
-              <tr key={idx}>
+              <tr>
                 {row.map(cell => (
-                  <td key={cell.col}>
+                  <td>
                     <Square
                       value={cell.value}
                       row={cell.row}
