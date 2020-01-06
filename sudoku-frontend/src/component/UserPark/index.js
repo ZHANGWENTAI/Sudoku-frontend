@@ -23,6 +23,7 @@ class UserPark extends Component {
         pid: 0,
         activeRow: 0,
         activeColumn: 0,
+        rightanswer: true,
         username: name,
         uid: 0,
         score: score,
@@ -55,33 +56,6 @@ class UserPark extends Component {
     }) 
   }
 
-  //if the answer is right, return true
-  checkAnswer() {
-    var answer = this.state.puzzleContent.split("")
-    for(let i = 0; i < 9; i++) {
-      let checkRow = {}
-      let checkCol = {}
-      let checkSub = {}
-      for(let j = 0; j < 9; j++) {
-        let num = answer[i*9 + j]
-        if(checkRow[num] === true) return false
-        checkRow[num] = true
-
-        num = answer[i + 9*j]
-        if(checkCol[num] === true) return false
-        checkCol[num] = true
-
-        num = answer[Math.floor(i/3)*27 + (i%3)*3 + Math.floor(j/3)*9 + (j%3)]
-        if(checkSub[num] === true) return false
-        checkSub[num] = true
-
-        console.log(i, j, checkRow, checkCol, checkSub)
-      }
-    }
-    console.log("bingo")
-    return true
-  }
-
   //check whether the board is fullfiled and whether the answer is right, finally submit
   handleSubmit() {
     var that = this
@@ -94,7 +68,7 @@ class UserPark extends Component {
       let uid = Cookies.get('uid')
       let authentication = Cookies.get('authentication')
       let pid = this.state.pid
-      let passed = this.checkAnswer() ? 1 : 0
+      let passed = this.state.rightanswer ? 1 : 0
       PuzzleAPI.postsubmit(uid, authentication, pid, passed).then(response => {
         response.json().then(data => {
           if (data.message === "Success") {
@@ -130,8 +104,10 @@ class UserPark extends Component {
   // update the state with the new puzzle string
   handleKeyClick(value) {
     var grid = new SudokuGrid(this.state.puzzleContent)
-    grid.rows[this.state.activeRow][this.state.activeColumn] = value;
-    this.setState({ 
+    grid.rows[this.state.activeRow][this.state.activeColumn] = value
+    var rightstep = grid.check(this.state.activeRow, this.state.activeColumn, parseInt(value, 10))
+    this.setState({
+      rightanswer: this.state.rightanswer && rightstep,
       puzzleContent: grid.toFlatString(),
       error: ''
     });

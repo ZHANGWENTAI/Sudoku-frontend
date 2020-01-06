@@ -27,15 +27,15 @@ class SudokuBoard extends Component {
     return (
       <table className="sudoku">
         <tbody>
-          {grid.rows.map(row => {
+          {grid.rows.map((row, ridx) => {
             return (
               <tr>
-                {row.map(cell => (
+                {row.map((num, cidx) => (
                   <td>
                     <Square
-                      value={cell.value}
-                      row={cell.row}
-                      col={cell.col}
+                      value={num}
+                      row={ridx}
+                      col={cidx}
                       onCellChosen={this.props.onCellChosen}
                     />
                   </td>

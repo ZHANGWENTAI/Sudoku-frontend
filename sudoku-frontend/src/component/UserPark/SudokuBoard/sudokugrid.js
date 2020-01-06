@@ -1,16 +1,3 @@
-class Cell {
-    constructor(row, col, value) {
-        this.value = value || 0;
-        this.row = row;
-        this.col = col;
-
-        this.possibleValues = [];
-    }
-
-    toString() {
-        return this.value || "0"
-    }
-}
 /*
     [[1, 2, 3], [4, 5, 6]].flatten()
     [1, 2, 3, 4, 5, 6]
@@ -29,149 +16,64 @@ const EMPTY = (() => {
 })();
 
 class SudokuGrid {
-    constructor(input = EMPTY) {
-        let currentRow;
+    constructor(input= EMPTY) {
+        let seq = '0'+ input
         this.rows = [];
+        this.columns = [];
+        this.subgrids = [];
 
-        for (let idx = 0; idx < input.length; idx++) {
-            if (idx % 9 === 0) {
-                currentRow = [];
-                this.rows.push(currentRow);
+        // turn input into this.rows
+        let temprow = [];
+        for (let i = 1; i <= input.length; i++) {
+            temprow.push(parseInt(seq[i], 10))
+            if (i % 9 === 0) {
+                this.rows.push(temprow);
+                temprow = []
+            }  
+        }
+
+        //turn input into this.columns
+        let tempcol = []
+        for (let i = 1; i <= 9; i++) {
+            for(let j = i; j <= input.length; j += 9) {
+                tempcol.push(parseInt(seq[j], 10))
             }
-
-            currentRow.push(
-                new Cell(this.rows.length - 1, currentRow.length, parseInt(input[idx],10))
-            );
+            this.columns.push(tempcol)
+            tempcol = []
         }
     }
 
-    // toString() {
-    //     let output = "";
-    //     for (let i = 0; i < this.rows.length; i++) {
-    //         if (i !== 0 && i % 3 === 0) {
-    //             output += "---------+---------+---------\n";
-    //         }
-
-    //         let currentRow = this.rows[i];
-    //         for (let j = 0; j < currentRow.length; j++) {
-    //             if (j !== 0 && j % 3 === 0) {
-    //                 output += "|";
-    //             }
-
-    //             output += " " + currentRow[j].toString() + " ";
-    //         }
-
-    //         output += "\n";
-    //     }
-
-    //     return output;
-    // }
-
-    subgrids() {
-        if (!this.grids) {
-            this.grids = [];
-            for (let i = 0; i < 9; i += 3) {
-                for (let j = 0; j < 9; j += 3) {
-                    this.grids.push(this.sameSubGridAs(new Cell(i, j)));
-                }
+    //turn input into this.subgrids
+    initSubGrid() {
+        let tempsub = []
+        for (let i = 1; i <= 9; i++) {
+            this.subgrids.push(tempsub)
+        }   
+        for(let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                this.subgrids[(i%3) * 3 + j%3].push(this.rows[i][j])
             }
         }
-
-        return this.grids;
     }
 
-    columns() {
-        if (!this._columns) {
-            this._columns = [];
-            for (let i = 0; i < 9; i++) {
-                this._columns.push([]);
-            }
-            this.rows.forEach(function(row) {
-                row.forEach(function(cell, idx) {
-                    this._columns[idx].push(cell);
-                }, this);
-            }, this);
-        }
-
-        return this._columns;
+    rowOf(rowIdx) {
+        return new Set(this.rows[rowIdx]);
     }
 
-    sameRowAs(cell) {
-        return this.rows[cell.row];
+    columnOf(colIdx) {
+        return new Set(this.columns[colIdx]);
     }
 
-    sameColAs(cell) {
-        return this.columns()[cell.col];
+    subGridOf(subIdx) {
+        return new Set(this.subgrids[subIdx])
     }
 
-    sameSubGridAs(cell) {
-        /*
-            Get all the cells in the same "sub grid" as the given cell. e.g.
-            for the cell "c" below the cells in the "same_sub_grid" (which are
-            marked x below) are returned along with the argument cell.
-            x x x | . . . | . . .
-            x c x | . . . | . . .
-            x x x | . . . | . . .
-            ------+-------+------
-            . . . | . . . | . . .
-            . . . | . . . | . . .
-            . . . | . . . | . . .
-            ------+-------+------
-            . . . | . . . | . . .
-            . . . | . . . | . . .
-            . . . | . . . | . . .
-        */
-
-        // row:
-        // 0 - 2 -> 0
-        // 3 - 5 -> 3
-        // 6 - 8 -> 5
-
-        // col:
-        // same as above
-        if (!cell.subgrid) {
-            let index = function(x) {
-                if (x <= 2) {
-                    return 0;
-                } else if (x <= 5) {
-                    return 3;
-                } else {
-                    return 6;
-                }
-            };
-
-            let startRow = index(cell.row),
-                startCol = index(cell.col),
-                subgrid = [];
-            for (let i = startRow; i < startRow + 3; i++) {
-                let row = this.rows[i],
-                    subGridRow = [];
-                for (let j = startCol; j < startCol + 3; j++) {
-                    subGridRow.push(row[j]);
-                }
-
-                subgrid.push(subGridRow);
-            }
-            cell.subgrid = subgrid;
-        }
-
-        return cell.subgrid;
-    }
-
-    unsolved() {
-        return this.rows.flatten().filter(c => c.value === 0);
-    }
-
-    isSolved() {
-        return !this.rows.flatten().some(x => x.value === 0);
-    }
-
-    peers(cell) {
+    check() {
         /*
             Get the peers for the cell.  The peers for the cell "c" are pictorially
             represented below by the cells marked "x"
             x x x | . . . | . . .
-            x c x | x x x | x x x
+            x x x | x x x | x x x
             x x x | . . . | . . .
             ------+-------+------
             . x . | . . . | . . .
@@ -182,18 +84,17 @@ class SudokuGrid {
             . x . | . . . | . . .
             . x . | . . . | . . .
         */
-        if (!cell.peers) {
-            cell.peers = Array.from(
-                new Set(
-                    this.sameColAs(cell)
-                        .concat(this.sameRowAs(cell))
-                        .concat(this.sameSubGridAs(cell).flatten())
-                        .filter(x => x !== cell)
-                )
-            );
-        }
-
-        return cell.peers;
+       let ifRight = true
+       this.initSubGrid()
+       for (let i = 0; i < 9; i++) {
+           for(let j = 1; j <= 9; j++){
+                ifRight = ifRight && 
+                            this.rowOf(i).has(j) && 
+                            this.coilumnOf(i).has(j) && 
+                            this.subGridOf(i).has(j);
+           }
+       }
+       return ifRight
     }
 
     toFlatString() {
