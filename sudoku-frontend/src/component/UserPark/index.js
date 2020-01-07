@@ -1,5 +1,5 @@
-import React, {Component} from 'react'
-import {Grid, Message, Container, Button} from 'semantic-ui-react'
+import React, { Component } from 'react'
+import { Grid, Message, Container, Button } from 'semantic-ui-react'
 import SudokuBoard from './SudokuBoard'
 import SudokuGrid from './SudokuBoard/sudokugrid'
 import Cookies from 'js-cookie'
@@ -18,29 +18,28 @@ class UserPark extends Component {
     var createdtime = Cookies.get("createdtime");
     super(props);
     this.state = {
-        error: '',
-        puzzleContent: initPuzzleContent,
-        pid: 0,
-        activeRow: 0,
-        activeColumn: 0,
-        rightanswer: true,
-        username: name,
-        uid: 0,
-        score: score,
-        submited: submited,
-        passed: passed,
-        createdtime: createdtime.substr(0, 10),
-        message: ''
+      error: '',
+      puzzleContent: initPuzzleContent,
+      pid: 0,
+      activeRow: 0,
+      activeColumn: 0,
+      username: name,
+      uid: 0,
+      score: score,
+      submited: submited,
+      passed: passed,
+      createdtime: createdtime.substr(0, 10),
+      message: ''
     };
   }
 
   //generate pid and level according difficulty then send request to backend
   handleNewProblem(difficulty) {
     var that = this
-    let gen = new Promise(function(resolve) {
-      resolve({ pid: Math.floor(Math.random() * 100) + 1, level: 70 + difficulty + Math.floor(Math.random()*3)});
+    let gen = new Promise(function (resolve) {
+      resolve({ pid: Math.floor(Math.random() * 100) + 1, level: 70 + difficulty + Math.floor(Math.random() * 3) });
     });
-    gen.then(function(PL){
+    gen.then(function (PL) {
       PuzzleAPI.pullnewproblem(PL.pid, PL.level).then(response => {
         response.json().then(data => {
           if (data.message === "Success") {
@@ -49,17 +48,17 @@ class UserPark extends Component {
               pid: data.data.pid
             })
           } else {
-            that.setState({error: data.message});
+            that.setState({ error: data.message });
           }
         });
       });
-    }) 
+    })
   }
 
   //check whether the board is fullfiled and whether the answer is right, finally submit
   handleSubmit() {
     var that = this
-    if(this.state.puzzleContent.search('0') !== -1) {
+    if (this.state.puzzleContent.search('0') !== -1) {
       this.setState({
         error: "Please complete the table before submit"
       })
@@ -68,7 +67,8 @@ class UserPark extends Component {
       let uid = Cookies.get('uid')
       let authentication = Cookies.get('authentication')
       let pid = this.state.pid
-      let passed = this.state.rightanswer ? 1 : 0
+      var grid = new SudokuGrid(this.state.puzzleContent)
+      let passed = grid.check() ? 1 : 0
       PuzzleAPI.postsubmit(uid, authentication, pid, passed).then(response => {
         response.json().then(data => {
           if (data.message === "Success") {
@@ -105,9 +105,8 @@ class UserPark extends Component {
   handleKeyClick(value) {
     var grid = new SudokuGrid(this.state.puzzleContent)
     grid.rows[this.state.activeRow][this.state.activeColumn] = value
-    var rightstep = grid.check(this.state.activeRow, this.state.activeColumn, parseInt(value, 10))
+    // var rightstep = grid.check(this.state.activeRow, this.state.activeColumn, parseInt(value, 10))
     this.setState({
-      rightanswer: this.state.rightanswer && rightstep,
       puzzleContent: grid.toFlatString(),
       error: ''
     });
@@ -126,17 +125,17 @@ class UserPark extends Component {
   render() {
     var message;
     if (this.state.error !== "") {
-        message = (
-            <Message size="big" negative>
-                <p>{ this.state.error }</p>
-            </Message>
-        )
+      message = (
+        <Message size="big" negative>
+          <p>{this.state.error}</p>
+        </Message>
+      )
     }
     if (this.state.error === "" && this.state.message !== "") {
       message = (
-          <Message size="big">
-              <p>{ this.state.message }</p>
-          </Message>
+        <Message size="big">
+          <p>{this.state.message}</p>
+        </Message>
       )
     }
     return (
@@ -158,10 +157,10 @@ class UserPark extends Component {
               />
             </Grid.Column>
             <Grid.Column width={8}>
-                <SudokuBoard
-                  puzzleContent={this.state.puzzleContent}
-                  onCellChosen={this.onCellChosen.bind(this)}
-                />
+              <SudokuBoard
+                puzzleContent={this.state.puzzleContent}
+                onCellChosen={this.onCellChosen.bind(this)}
+              />
             </Grid.Column>
             <Grid.Column width={4}>
               <KeyBoard
@@ -170,17 +169,17 @@ class UserPark extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>
-            <Button color='teal'  size='large' style={{marginRight: '15px'}} onClick={() => {this.setState({message: 'Checking and submitting...'});this.handleSubmit();}}> Submit </Button>
+            <Button color='teal' size='large' style={{ marginRight: '15px' }} onClick={() => { this.setState({ message: 'Checking and submitting...' }); this.handleSubmit(); }}> Submit </Button>
             <Button.Group>
               <Button color='green' size='large' onClick={() => this.handleNewProblem(8)}> Easy </Button>
               <Button.Or />
-              <Button color='yellow' size='large'  onClick={() => this.handleNewProblem(4)}> Medium </Button>
+              <Button color='yellow' size='large' onClick={() => this.handleNewProblem(4)}> Medium </Button>
               <Button.Or />
               <Button color='red' size='large' onClick={() => this.handleNewProblem(0)}> Hard </Button>
             </Button.Group>
           </Grid.Row>
         </Grid>
-      </Container> 
+      </Container>
     );
   }
 }
