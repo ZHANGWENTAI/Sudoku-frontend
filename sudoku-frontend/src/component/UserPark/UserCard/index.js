@@ -6,12 +6,17 @@ import Cookies from 'js-cookie'
 class UserCard extends Component {
     constructor(props) {
         super(props)
+        var name = Cookies.get("username");
+        var score = Cookies.get("score");
+        var submited = Cookies.get("submited");
+        var passed = Cookies.get("passed");
+        var createdtime = Cookies.get("createdtime");
         this.state = {
-            username: this.props.username,
-            score: this.props.score,
-            submited: this.props.submited,
-            passed: this.props.passed,
-            createdtime: this.props.createdtime,
+            username: name,
+            score: score,
+            submited: submited,
+            passed: passed,
+            createdtime: createdtime.substr(0, 10),
         }
     }
 

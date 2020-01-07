@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { Icon } from 'semantic-ui-react'
 
 // the soft keyboard used to fill in SudokuBoard
 class KeyBoard extends Component {
@@ -20,6 +21,11 @@ class KeyBoard extends Component {
               </tr>
             )
           })}
+          <tr>
+          <button class="KeyBoard" onClick={() => this.props.handleKeyClick(0)}>
+            <Icon name='eraser' size='small' />
+          </button>
+          </tr>
         </tbody>
       </table>
     );
