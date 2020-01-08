@@ -37,7 +37,7 @@ class UserPark extends Component {
   handleNewProblem(difficulty) {
     var that = this
     let gen = new Promise(function (resolve) {
-      resolve({ pid: Math.floor(Math.random() * 100) + 1, level: 70 + difficulty + Math.floor(Math.random() * 3) });
+      resolve({ pid: Math.floor(Math.random() * 100) + 1, level: 21 + difficulty + Math.floor(Math.random() * 3) });
     });
     gen.then(function (PL) {
       PuzzleAPI.pullnewproblem(PL.pid, PL.level).then(response => {
